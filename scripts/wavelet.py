@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # 3rd party imports
-import matplotlib.pyplot as plt
-import numpy as np
-import xarray as xr
 from pyrfu import mms, pyrf
 
 __author__ = "Louis Richard"
@@ -16,6 +13,8 @@ mms.db_init(default="local", local="../data/")
 
 
 def main():
+    r"""Compute wavelet transform."""
+
     # Define time interval and spacecraft index
     tint = ["2015-10-30T05:15:20.000", "2015-10-30T05:16:20.000"]
     mms_id = 1
@@ -37,6 +36,8 @@ def main():
     # Compute wavelet transform (this is the heavy part)
     nf = 100
     e_cwt = pyrf.wavelet(e_fac, f=[fmin, fmax], n_freqs=nf)
+
+    e_cwt.to_netcdf("../data/output_wavelet.nc")
 
 
 if __name__ == "__main__":

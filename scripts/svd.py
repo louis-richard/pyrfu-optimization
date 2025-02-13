@@ -4,8 +4,17 @@
 # 3rd party imports
 from pyrfu import mms, pyrf
 
+__author__ = "Louis Richard"
+__email__ = "louisr@irfu.se"
+__license__ = "MIT"
+
+# Initialize MMS client
+mms.db_init(default="local", local="../data/")
+
 
 def main():
+    r"""Perform polarization analysis."""
+
     # Define time interval and spacecraft index
     tint = ["2015-10-30T05:15:42.000", "2015-10-30T05:15:54.00"]
     tint_long = pyrf.extend_tint(tint, [-100, 100])
@@ -28,6 +37,8 @@ def main():
         polarization=True,
         fac=True,
     )
+
+    polarization.to_netcdf("../data/output_polarization.nc")
 
 
 if __name__ == "__main__":

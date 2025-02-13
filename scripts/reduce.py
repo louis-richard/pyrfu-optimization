@@ -1,10 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# 3rd party imports
 import numpy as np
 from pyrfu import mms, pyrf
 
+__author__ = "Louis Richard"
+__email__ = "louisr@irfu.se"
+__license__ = "MIT"
+
+# Initialize MMS client
 mms.db_init(default="local", local="../data/")
 
 
 def main():
+    r"""Compute 1D reduced ion velocity distribution function."""
     tint = ["2015-12-28T03:57:10", "2015-12-28T03:59:00"]
     mms_id = 2
 
@@ -45,26 +55,14 @@ def main():
     nt1t2 = np.transpose(np.stack([n_dmpa.data, t1_dmpa.data, t2_dmpa.data]), [1, 2, 0])
     nt1t2 = pyrf.ts_tensor_xyz(b_dmpa.time.data, nt1t2)
 
-    t1t2n = np.transpose(np.stack([t1_dmpa.data, t2_dmpa.data, n_dmpa.data]), [1, 2, 0])
-    t1t2n = pyrf.ts_tensor_xyz(b_dmpa.time.data, t1t2n)
-
-    t2nt1 = np.transpose(np.stack([t2_dmpa.data, n_dmpa.data, t1_dmpa.data]), [1, 2, 0])
-    t2nt1 = pyrf.ts_tensor_xyz(b_dmpa.time.data, t2nt1)
-
     # Define the velocity grid
     vn_lim = np.array([-800.0, 800.0], dtype=np.float64)
-    vt1_lim = vn_lim
-    vt2_lim = vn_lim + 300.0
-
     vg_1d_n = 1e3 * np.linspace(vn_lim[0], vn_lim[1], 100)
-    vg_1d_t1 = 1e3 * np.linspace(vt1_lim[0], vt1_lim[1], 100)
-    vg_1d_t2 = 1e3 * np.linspace(vt2_lim[0], vt2_lim[1], 100)
 
     # Reduce the ion VDF to 1D (actual heavy part)
     n_mc = 200
     f1dn = mms.reduce(vdf_i, projection_dim="1d", xyz=nt1t2, n_mc=n_mc, vg=vg_1d_n)
-    f1dt1 = mms.reduce(vdf_i, projection_dim="1d", xyz=t1t2n, n_mc=n_mc, vg=vg_1d_t1)
-    f1dt2 = mms.reduce(vdf_i, projection_dim="1d", xyz=t2nt1, n_mc=n_mc, vg=vg_1d_t2)
+    f1dn.to_netcdf("../data/output_reduce.nc")
 
 
 if __name__ == "__main__":
