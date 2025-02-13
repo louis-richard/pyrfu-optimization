@@ -1,0 +1,6 @@
+# Virtual environment
+.venv/
+
+# MMS data
+data/*
+
