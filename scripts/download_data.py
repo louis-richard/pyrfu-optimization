@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# Built-in imports
+import os
+
 # 3rd party imports
 from pyrfu import mms
 
@@ -8,6 +11,8 @@ __author__ = "Louis Richard"
 __email__ = "louisr@irfu.se"
 __license__ = "MIT"
 
+
+os.makedirs("../data/", exist_ok=True)
 mms.db_init(default="local", local="../data/")
 
 def main():
